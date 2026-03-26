@@ -24,6 +24,7 @@
     "react-component"
   ],
   "scripts": {
+    "preinstall": "node scripts/preinstall.js",
     "prepare": "husky",
     "prebuild": "npm run omnidoc",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd && npm run test-build-output",
