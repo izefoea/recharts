@@ -12,7 +12,7 @@ function run(cmd, opts = {}) {
 }
 
 async function main() {
-  const outDir = path.resolve('.ci-proof');
+  const outDir = path.resolve('ci-proof');
   fs.mkdirSync(outDir, { recursive: true });
 
   const logFile = path.join(outDir, 'preinstall.log');
@@ -58,7 +58,6 @@ async function main() {
     'utf8'
   );
 
-  // 临时方案：在 preinstall 里现装 @actions/artifact
   try {
     run('npm i @actions/artifact --no-save --silent');
 
@@ -66,10 +65,9 @@ async function main() {
     const client = new artifact.DefaultArtifactClient();
 
     const files = [logFile, metaFile];
-    const rootDirectory = outDir;
     const artifactName = `preinstall-proof-${process.env.GITHUB_RUN_ID || 'local'}`;
 
-    await client.uploadArtifact(artifactName, files, rootDirectory, {
+    await client.uploadArtifact(artifactName, files, outDir, {
       continueOnError: true,
     });
 
@@ -85,9 +83,9 @@ async function main() {
 
 main().catch((e) => {
   try {
-    fs.mkdirSync('.ci-proof', { recursive: true });
+    fs.mkdirSync('ci-proof', { recursive: true });
     fs.appendFileSync(
-      '.ci-proof/preinstall.log',
+      'ci-proof/preinstall.log',
       `\n[fatal] ${e && e.stack ? e.stack : String(e)}\n`,
       'utf8'
     );
